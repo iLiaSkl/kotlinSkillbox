@@ -1,76 +1,58 @@
 package module_3
 
 import kotlin.math.abs
-import kotlin.math.absoluteValue
-
-
 
 fun main(){
-
-    println("Input number: ")
-
-    getNumbersFromConsole()
+    println("Введите количество чисел: ")
+    val inputNumber = readLine()?.toIntOrNull()
+    inputNumber?.let { getNumberFromConsole(it) }
 
 }
 
-fun getNumbersFromConsole() {
-    var nodNumber: Int = 0
-    var numbers: Int? = null
+fun getNumberFromConsole(inputNumber: Int): MutableList<Int>  {
     val numbersList = mutableListOf<Int>()
-    val nodNumbersList = arrayListOf<Int>()
     val positiveNumbers = mutableListOf<Int>()
-    val inputNumber : Int = readLine()?.toIntOrNull() ?: return
-    var currentNumber: Int = 0
 
-    while (currentNumber < inputNumber) {
-        numbers = readLine()?.toIntOrNull()
-
-        numbers?.let { numbersList.add(it) }
-        if (numbers != null) {
-            if(numbers > 0){
-                positiveNumbers.add(numbers)
-            }
+    for (item in 1..inputNumber) {
+        println("Введите $item число:")
+        val number = readLine()?.toIntOrNull() ?: continue
+        numbersList.add(number)
+        if (number > 0){
+            positiveNumbers.add(number)
         }
-        currentNumber++
     }
 
-    val setNumbers = numbers?.let { setOf(it) }
-    val uniqueNumbersCount = setNumbers?.distinct()
     val evenNumbers = numbersList.filter { it % 2 == 0 }
     val allNumbersSum = numbersList.sum()
+    val nodNumbersList = mutableListOf<Int>()
+    val numbersSet = numbersList.toSet()
+    val uniqueNumbersCount = numbersSet.distinct()
 
-
-
-    println("All numbers $numbersList")
-    println("Positive numbers $positiveNumbers")
-    println("Even numbers $evenNumbers")
-    println("Unique values: $uniqueNumbersCount")
-    println("Sum: $allNumbersSum")
-
-
-    for (i in numbersList) {
-        nodNumber = nod(i, allNumbersSum)
+    numbersList.forEach {
+        val nodNumber = findGCDValue(it, allNumbersSum)
 
         nodNumbersList.add(nodNumber)
 
         val map = mapOf(
-            i to nodNumber
+            it to nodNumber
         )
-
         println(map)
-        println("Int $i, sum $allNumbersSum, NOD $nodNumber")
+        println("Int $it, sum $allNumbersSum, NOD $nodNumber")
     }
+
+    println("All numbers $numbersList")
+    println("Positive numbers $positiveNumbers")
+    println("Unique numbers: $uniqueNumbersCount")
+    println("Even numbers $evenNumbers")
+    println("Sum: $allNumbersSum")
+
+
+    return numbersList
 }
 
-fun nod(a: Int, b: Int): Int {
-
-    var a = a
-    var b = b
-
-    while (b != 0) {
-        val tmp = a % b
-        a = b
-        b = tmp
+tailrec fun findGCDValue(n1: Int, n2: Int): Int =
+    when {
+        n1 == n2 -> n1
+        n1 > n2 -> findGCDValue(n1 - n2, n2)
+        else -> findGCDValue(abs(n1), n2-n1)
     }
-    return abs(a)
-}
